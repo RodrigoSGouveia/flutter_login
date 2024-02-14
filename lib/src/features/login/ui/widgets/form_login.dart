@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_login/core/validations/email_validator.dart';
-import 'package:flutter_login/core/validations/validations.dart';
 
-class FormLogin extends StatelessWidget {
+import 'package:flutter_login/core/validations/validations.dart';
+import 'package:flutter_login/src/features/login/resources/resources.dart';
+
+class FormLogin extends StatefulWidget {
   final TextEditingController emailController;
   final Function(String) emailOnChanged;
   final String emailHint;
@@ -27,29 +28,39 @@ class FormLogin extends StatelessWidget {
   });
 
   @override
+  State<FormLogin> createState() => _FormLoginState();
+}
+
+class _FormLoginState extends State<FormLogin> {
+  bool pObscured = true;
+
+  @override
   Widget build(BuildContext context) {
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "E-mail",
+              LoginStringsResources.email,
               style: TextStyle(color: Colors.grey[800]),
             ),
           ),
-          TextFormField(
-            controller: emailController,
-            validator: EmailValidator(errorText: emailErrorMessage),
-            decoration: InputDecoration(
-              hintText: emailHint,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+          Padding(
+            padding: const EdgeInsets.only(right: 45),
+            child: TextFormField(
+              controller: widget.emailController,
+              validator: EmailValidator(errorText: widget.emailErrorMessage),
+              decoration: InputDecoration(
+                hintText: widget.emailHint,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
               ),
+              onChanged: widget.emailOnChanged,
             ),
-            onChanged: emailOnChanged,
           ),
           const SizedBox(
             height: 15,
@@ -57,20 +68,36 @@ class FormLogin extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Senha",
+              LoginStringsResources.password,
               style: TextStyle(color: Colors.grey[800]),
             ),
           ),
-          TextFormField(
-            controller: passwordController,
-            validator: RequiredValidator(errorText: passwordErrorMessage),
-            decoration: InputDecoration(
-              hintText: passwordHint,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(15),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: widget.passwordController,
+                  obscureText: pObscured,
+                  validator:
+                      RequiredValidator(errorText: widget.passwordErrorMessage),
+                  decoration: InputDecoration(
+                    hintText: widget.passwordHint,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onChanged: widget.passwordOnChanged,
+                ),
               ),
-            ),
-            onChanged: passwordOnChanged,
+              IconButton(
+                onPressed: () => setState(() {
+                  pObscured = !pObscured;
+                }),
+                icon: Icon(pObscured
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined),
+              ),
+            ],
           ),
         ],
       ),
